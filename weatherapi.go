@@ -6,6 +6,7 @@ import "io/ioutil"
 import "log"
 import "os"
 import "github.com/joho/godotenv"
+import "encoding/json"
 
 func main() {
 
@@ -28,13 +29,24 @@ func main() {
         os.Exit(1)
     }
 
-    responseData, err := ioutil.ReadAll(response.Body)
+    response_data, err := ioutil.ReadAll(response.Body)
     if err != nil {
         log.Fatal(err)
 	}
 	
 	// Show the data we got
-    fmt.Println(string(responseData))
+	fmt.Println("Raw Data")
+	fmt.Println(string(response_data))
+	
+	// Setup an empty map to get the JSON parsed data.
+	var parsed_response map[string]interface{}
+
+	// Parse the data. 
+	json.Unmarshal([]byte(response_data), &parsed_response)
+
+	fmt.Println("Parsed Data")
+	parsed_response_main := parsed_response["main"].(map[string]interface{})
+	fmt.Println("Temp: ", parsed_response_main["temp"])
 
 }
 
