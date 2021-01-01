@@ -8,6 +8,53 @@ import "os"
 import "github.com/joho/godotenv"
 import "encoding/json"
 
+type OpenWeatherMapAPI struct {
+    Coord struct {
+        Lon float64 `json:"lon"`
+        Lat float64 `json:"lat"`
+    } `json:"coord"`
+
+    Weather []struct {
+        ID          int    `json:"id"`
+        Main        string `json:"main"`
+        Description string `json:"description"`
+        Icon        string `json:"icon"`
+    } `json:"weather"`
+
+    Base string `json:"base"`
+    Main struct {
+        Temp      float64 `json:"temp"`
+        FeelsLike float64 `json:"feels_like"`
+        TempMin   float64 `json:"temp_min"`
+        TempMax   float64 `json:"temp_max"`
+        Pressure  int     `json:"pressure"`
+        Humidity  int     `json:"humidity"`
+    } `json:"main"`
+
+    Visibility int `json:"visibility"`
+    Wind       struct {
+        Speed float64 `json:"speed"`
+        Deg   int     `json:"deg"`
+    } `json:"wind"`
+
+    Clouds struct {
+        All int `json:"all"`
+    } `json:"clouds"`
+
+    Dt  int `json:"dt"`
+    Sys struct {
+        Type    int    `json:"type"`
+        ID      int    `json:"id"`
+        Country string `json:"country"`
+        Sunrise int    `json:"sunrise"`
+        Sunset  int    `json:"sunset"`
+    } `json:"sys"`
+    Timezone int    `json:"timezone"`
+    ID       int    `json:"id"`
+    Name     string `json:"name"`
+    Cod      int    `json:"cod"`
+}
+
 func main() {
 
     // Get vars from .env file
@@ -37,16 +84,14 @@ func main() {
     // Show the data we got
     fmt.Println("Raw Data")
     fmt.Println(string(response_data))
+    fmt.Println("")
     
-    // Setup an empty map to get the JSON parsed data.
-    var parsed_response map[string]interface{}
+    var weather_data OpenWeatherMapAPI
+    json.Unmarshal([]byte(response_data), &weather_data)
 
-    // Parse the data. 
-    json.Unmarshal([]byte(response_data), &parsed_response)
-
-    fmt.Println("Parsed Data")
-    parsed_response_main := parsed_response["main"].(map[string]interface{})
-    fmt.Println("Temp: ", parsed_response_main["temp"])
+    fmt.Println(weather_data.Name)
+    fmt.Printf("%+v\n", weather_data.Main)
+    fmt.Println(weather_data.Main.Temp)
 
 }
 
